@@ -83,6 +83,33 @@
 			}) // end of highcharts object
 	  				
 	  	}) // end of getJSON
+
+		$('form.lightsForm').submit(function(e) {
+		  // Prevent submit because we will use ajaxSubmit() to actually send the
+          // attachment to CouchDB.
+          e.preventDefault();
+
+          // Get the user supplied details
+          $.couch.db("highland").openDoc("lights", {
+            // If found, then set the revision in the form and save
+            success: function(couchDoc) {
+              // Defining a revision on saving over a Couch Doc that exists is required.
+              // This puts the last revision of the Couch Doc into the input#rev field
+              // so that it will be submitted using ajaxSubmit.
+              couchDoc.on_for = $('.lightsForm input#on_for').val()
+			  $.couch.db("highland").saveDoc(couchDoc,   {
+				    success: function(data) {
+				        alert("Timer set");
+				    },
+				    error: function(status) {
+				        console.log(status);
+				    }
+				})          
+            }, // End success, we have a Doc
+          })
+            
+
+		})
 	}) // end of pageinit for #highland
 
 	
